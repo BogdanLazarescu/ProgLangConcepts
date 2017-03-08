@@ -1,0 +1,7 @@
+
+
+with stream1, stream2
+
+loop
+	
+	out stream1~ - 3 * stream2~;

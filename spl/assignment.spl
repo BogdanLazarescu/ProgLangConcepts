@@ -1,0 +1,19 @@
+
+with stream
+
+begin
+
+	testvar = 5;
+
+loop
+	
+	testvar++;
+	
+	if testvar % 2 == 0 then
+
+		testvar = -testvar;
+
+	endif
+
+
+	out testvar;

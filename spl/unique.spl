@@ -1,0 +1,26 @@
+
+with stream
+
+begin
+
+	seen = [];
+
+loop
+
+	debug("currently seen elements:", seen);
+	
+	if seen.contains(stream~) == false then
+
+		out stream~;
+
+		seen.append(stream~);
+
+	endif
+
+	if seen.length() == 2 then
+
+		debug("seen.length() == 2, element index 1 is: ", seen.get(1));
+
+		debug(typeof(seen.length()));
+
+	endif

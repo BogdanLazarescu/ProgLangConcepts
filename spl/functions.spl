@@ -1,0 +1,8 @@
+
+with stream1, stream2, stream3, stream4
+
+loop
+	
+	out average(stream1~, stream2~, stream3~, stream4~);
+	
+
