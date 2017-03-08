@@ -22,15 +22,12 @@ open Errors
 %token USING BEGIN LOOP SKIP IN OUT
 %token ASSIGN
 %token COMMA
-%token DOT
 
 %right ASSIGN
 %left EQ
 %left GREATERTHAN	LESSTHAN
 %left PLUS MINUS
 %left TIMES DIVIDE
-%right UMINUS
-%left DOT
 
 %start main
 %type <Language.program> main
@@ -99,12 +96,9 @@ expression:
 	| LPAREN expression RPAREN						{ $2 }
 	| assignment 									{ $1 }
 	| binary_operation 								{ $1 }
-	| unary_operation 								{ $1 }
 	| stream_construction 							{ $1 }
 	| IDENT LPAREN expression_list RPAREN 			{ Application ($1, $3) }
 	| IDENT LPAREN RPAREN 							{ Application ($1, []) }
-	| IDENT DOT IDENT LPAREN expression_list RPAREN { ScopedApplication ($1, $3, $5) }
-	| IDENT DOT IDENT LPAREN RPAREN 				{ ScopedApplication ($1, $3, []) }
 	| IDENT LBRACKET INT RBRACKET 					{ StreamAccess ($1, $3) }
 	| IDENT CURRENT 								{ StreamAccess ($1, 0) }
 	| IDENT shift_list 								{ StreamAccess ($1, $2) }
@@ -137,10 +131,6 @@ binary_operation:
 	| expression MINUS expression 	{ BinaryOperation (Minus, $1, $3) }
 	| expression TIMES expression 	{ BinaryOperation (Times, $1, $3) }
 	| expression DIVIDE expression 	{ BinaryOperation (Divide, $1, $3) }
-;
-
-unary_operation:
-	  MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
 ;
 
 condition:

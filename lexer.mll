@@ -7,7 +7,6 @@
 let white_space = [' ' '\t']
 let digit = ['0'-'9']
 let int = digit +
-let float = (int '.' int) | (int ['f' 'F'])
 let char = ''' [^ '\n'] '''
 let bool = "true" | "false"
 let alphanum = ['a'-'z' 'A'-'Z' '0'-'9' '_']*
@@ -81,10 +80,6 @@ rule token = parse
 	(* Function Application Expression Lists *)
 
 	| ',' 					{ COMMA }
-
-	(* Scoped Function Application *)
-
-	| '.' 					{ DOT }
 
 	(* Error Reporting *)
 
