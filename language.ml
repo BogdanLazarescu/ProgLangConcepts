@@ -1,10 +1,13 @@
 
+module SS = Set.Make(String);;
 type literal =
 	  Int 	of int
 	| Bool 	of bool
 	| Char 	of char
 	| String of string
+	| Set of SS.t
 	| Stream of literal list;;
+
 
 type assignment =
 	  StandardAssign;;
@@ -15,8 +18,6 @@ type binary_operation =
  	| Divide
  	| Times;;
 
-type unary_operation =
-	  UnaryMinus;;
 
 type expression =
  	  Literal 				of literal
@@ -25,9 +26,9 @@ type expression =
  	| Application 			of string * expression list
  	| ScopedApplication 	of string * string * expression list
  	| BinaryOperation 		of binary_operation * expression * expression
- 	| UnaryOperation 		of unary_operation * expression
  	| Assignment 			of assignment * string * expression
- 	| StreamConstruction 	of expression list;;
+ 	| StreamConstruction 	of expression list
+	| SetConstruction 	of expression list;;
 
 type test_type =
 	Equality

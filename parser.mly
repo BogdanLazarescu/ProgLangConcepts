@@ -11,6 +11,7 @@ open Errors
 %token <string> IDENT
 %token <string> STRING
 
+%token SETUNION SETDIFF SETINTER
 %token EOF EOL
 %token TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE
@@ -19,11 +20,12 @@ open Errors
 %token LCBRACKET RCBRACKET
 %token LESSTHAN GREATERTHAN EQ
 %token IF THEN ELSE ENDIF
-%token USING BEGIN LOOP SKIP IN OUT
+%token USING USE BEGIN LOOP SKIP IN OUT
 %token ASSIGN
 %token COMMA
 
 %right ASSIGN
+%left SETUNION SETDIFF SETINTER
 %left EQ
 %left GREATERTHAN	LESSTHAN
 %left PLUS MINUS
@@ -38,6 +40,9 @@ main:
 	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
 	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
 	| USING identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
+	|	USE identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
+	| USE identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
+	| USE identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
 	| error {
 			parse_err "Malformed program structure, 'with' is required, 'begin' and 'loop' are optional but must have statements.";
 			Program ([], [], [])
@@ -97,6 +102,7 @@ expression:
 	| assignment 									{ $1 }
 	| binary_operation 								{ $1 }
 	| stream_construction 							{ $1 }
+	| set_construction 							{ $1 }
 	| IDENT LPAREN expression_list RPAREN 			{ Application ($1, $3) }
 	| IDENT LPAREN RPAREN 							{ Application ($1, []) }
 	| IDENT LBRACKET INT RBRACKET 					{ StreamAccess ($1, $3) }
@@ -121,6 +127,11 @@ stream_construction:
 	  LBRACKET expression_list RBRACKET { StreamConstruction $2 }
 	| LBRACKET RBRACKET 				{ StreamConstruction [] }
 ;
+
+set_construction:
+	LCBRACKET expression_list RCBRACKET { SetConstruction $2 }
+	| LCBRACKET RCBRACKET 				{ SetConstruction [] }
+	;
 
 assignment:
 	  IDENT ASSIGN expression 		{ Assignment (StandardAssign, $1, $3) }

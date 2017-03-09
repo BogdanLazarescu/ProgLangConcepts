@@ -60,9 +60,9 @@ $(OBJDIR)/%.cmo: %.ml $(OBJDIR)
 $(OBJDIR)/%.cmo: $(LIBDIR)/%.ml $(OBJDIR)
 	@echo "-> Compiling library module: $<"
 	$(CC) -o $@ -c $<
-	
+
 # Compile Module (Attempt to build its Interface first, dont think this will work)
-	
+
 $(OBJDIR)/%.cmo: %.ml $(OBJDIR)/%.cmi $(OBJDIR)
 	@echo "-> Compiling module: $<"
 	$(CC) -o $@ -c $<
@@ -87,7 +87,7 @@ $(OBJDIR)/lexer.cmo: lexer.mll $(GENDIR) $(OBJDIR)/parser.cmo $(OBJDIR)/parser.c
 # Create output directories
 
 $(OBJDIR):
-	@echo "-> Creating objects directory..." 
+	@echo "-> Creating objects directory..."
 	@mkdir $(OBJDIR)
 
 $(BINDIR):
@@ -102,4 +102,4 @@ $(GENDIR):
 
 clean:
 	@echo "-> Removing build directories..."
-	@rm -rf $(BINDIR) $(OBJDIR) $(GENDIR)	
+	@rm -rf $(BINDIR) $(OBJDIR) $(GENDIR)

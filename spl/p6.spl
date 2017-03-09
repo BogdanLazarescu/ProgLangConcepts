@@ -1,0 +1,6 @@
+
+sets set1, set2
+
+begin
+
+	out "dadada";

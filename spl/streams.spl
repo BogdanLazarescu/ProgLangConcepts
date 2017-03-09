@@ -3,6 +3,7 @@ with stream1, stream2
 
 begin
 
-	test = [ 'a', 'b', 'c'];
+	test = [ 'a', 'b', 'c', "asda", "mama"];
 
-	out test;
+	out test >>;
+	out "dadada";

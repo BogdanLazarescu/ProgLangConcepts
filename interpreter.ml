@@ -9,7 +9,7 @@ open Streams
 class interpreter =
 	object (this)
 
-		val mutable bindings = ([] : (string * literal) list)
+		val mutable bindings = ([] : (string * SS.t) list)
 		val mutable inputs = ([] : string list)
 		val output = ("_out" : string)
 
@@ -48,7 +48,7 @@ class interpreter =
 		(* Output *)
 
 		method define_output =
-			this#update_binding output (Stream [])
+			this#update_binding output SS.empty
 
 		method get_output =
 			match this#read_binding output with
@@ -56,6 +56,9 @@ class interpreter =
 				(string_of_int (List.length stream)) ^ "\n" ^ string_trim (Streams.string_of_stream stream)
 			| literal ->
 				Streams.string_of_literal literal
+			| Set set ->
+				(string_of_int (SS.cardinal set)) ^ "\n" ^ string_trim (Streams.string_of_stream (SS.elements set))
+			|  _ -> string_of_int (1)
 
 		(* Stream continuation operations *)
 
@@ -76,11 +79,11 @@ class interpreter =
 
 		(* Interpreter *)
 
-		method run program stream_list =
+		method run program sets_list =
 			match program with
 				| Program (using, start, loop) ->
 
-					this#define_streams using stream_list;
+					this#define_streams using sets_list;
 					this#define_output;
 
 					this#run_statement_list start;
@@ -151,12 +154,12 @@ class interpreter =
 					this#apply_scoped_function operation variable arguments
 				| BinaryOperation (operation, left, right) ->
 					this#run_binary_operation operation left right
-				| UnaryOperation (operation, expression) ->
-					this#run_unary_operation operation expression
 				| Assignment (optype, identifier, value) ->
 					this#run_assignment optype identifier value
 				| StreamConstruction (expressions) ->
 					this#construct_stream expressions
+				| SetConstruction (expressions) ->
+					this#construct_set expressions
 				| StreamAccess (stream, index) ->
 					try
 						match (this#read_binding stream) with
@@ -192,11 +195,6 @@ class interpreter =
 					| Minus 	-> Math.minus x y
 					| Times 	-> Math.times x y
 					| Divide 	-> Math.divide x y
-
-		method run_unary_operation operation expression =
-			let x = this#evaluate_expression expression in
-				match operation with
-					| UnaryMinus -> Math.unary_minus x
 
 		method run_assignment optype identifier expression =
 			let evaluated = this#evaluate_expression expression in
@@ -275,5 +273,10 @@ class interpreter =
 					| [] -> []
 				in
 					internal expression_list
+			)
+
+			method construct_set expression_list =
+			Set (
+				SS.of_list ["ana";"mama";"tata"]
 			)
 	end;;

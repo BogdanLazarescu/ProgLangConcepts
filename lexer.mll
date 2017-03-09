@@ -43,6 +43,12 @@ rule token = parse
 	| '{'						{ LCBRACKET}
 	| '}'						{	RCBRACKET}
 
+	(* Set Operators*)
+
+	| "SUnion" 					{SETUNION}
+	| "SInter"					{SETINTER}
+	| "SDiff"					{SETDIFF}
+
 	(* Stream Access *)
 
 	| '[' 					{ LBRACKET }
@@ -65,6 +71,7 @@ rule token = parse
 	(* Keywords *)
 
 	| "with"				{ USING }
+	| "sets"				{ USE}
 	| "begin"				{ BEGIN }
 	| "loop" 				{ LOOP }
 	| "skip"        { SKIP }
