@@ -18,9 +18,12 @@ type binary_operation =
  	| Divide
  	| Times;;
 
+	type set_operation =
+		Union;;
+
 
 type expression =
- 	  Literal 				of literal
+ 		Literal 				of literal
  	| Identifier 			of string
  	| StreamAccess 			of string * int
  	| Application 			of string * expression list
@@ -28,7 +31,8 @@ type expression =
  	| BinaryOperation 		of binary_operation * expression * expression
  	| Assignment 			of assignment * string * expression
  	| StreamConstruction 	of expression list
-	| SetConstruction 	of expression list;;
+	| SetConstruction 	of expression list
+	| SetOperation 	of set_operation * expression * expression;;
 
 type test_type =
 	Equality

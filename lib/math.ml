@@ -1,6 +1,11 @@
 
 open Language
 open Comparison
+let union x y =
+	match x, y with
+	| Set x, Set y -> SS.union x y
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
+
 
 let plus x y =
 	match x, y with

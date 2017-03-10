@@ -160,6 +160,8 @@ class interpreter =
 					this#apply_scoped_function operation variable arguments
 				| BinaryOperation (operation, left, right) ->
 					this#run_binary_operation operation left right
+				| SetOperation (operation, left, right) ->
+					this#run_set_operation operation left right
 				| Assignment (optype, identifier, value) ->
 					this#run_assignment optype identifier value
 				| StreamConstruction (expressions) ->
@@ -201,6 +203,13 @@ class interpreter =
 					| Minus 	-> Math.minus x y
 					| Times 	-> Math.times x y
 					| Divide 	-> Math.divide x y
+
+			method run_set_operation operation left right =
+				let x = this#evaluate_expression left in
+				let y = this#evaluate_expression right in
+					match operation with
+								| Union		-> Set(Math.union x y)
+
 
 		method run_assignment optype identifier expression =
 			let evaluated = this#evaluate_expression expression in

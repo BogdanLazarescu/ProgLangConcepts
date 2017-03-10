@@ -2,4 +2,4 @@
 sets set1, set2
 
 begin
-	out set1;
+	out set1 SUnion set2;

@@ -96,10 +96,12 @@ expression_list:
 ;
 
 expression:
+
 	  literal 										{ Literal $1 }
 	| IDENT 										{ Identifier $1 }
 	| LPAREN expression RPAREN						{ $2 }
 	| assignment 									{ $1 }
+	| set_operation 							{ $1 }
 	| binary_operation 								{ $1 }
 	| stream_construction 							{ $1 }
 	| set_construction 							{ $1 }
@@ -143,6 +145,10 @@ binary_operation:
 	| expression TIMES expression 	{ BinaryOperation (Times, $1, $3) }
 	| expression DIVIDE expression 	{ BinaryOperation (Divide, $1, $3) }
 ;
+
+set_operation:
+	expression SETUNION expression { SetOperation (Union, $1, $3) }
+	;
 
 condition:
 	  test 						{ UnaryCondition $1 }
