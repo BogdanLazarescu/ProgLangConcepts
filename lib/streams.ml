@@ -22,6 +22,8 @@ let rec string_of_literal = function
 	| Int n -> string_of_int n
 	| Bool b -> string_of_bool b
 	| Char c -> String.make 1 c
+	| Set s -> print_endline ("run stm: merge pe set in Streams.stringofLit");
+			("elemetele setului printate")
 	| String s -> s
 	| Stream s -> string_of_stream s
 

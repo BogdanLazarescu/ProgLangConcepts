@@ -9,7 +9,7 @@ open Streams
 class interpreter =
 	object (this)
 
-		val mutable bindings = ([] : (string * SS.t) list)
+		val mutable bindings = ([] : (string * literal) list)
 		val mutable inputs = ([] : string list)
 		val output = ("_out" : string)
 
@@ -48,17 +48,19 @@ class interpreter =
 		(* Output *)
 
 		method define_output =
-			this#update_binding output SS.empty
+			this#update_binding output (Set(SS.empty))
 
 		method get_output =
 			match this#read_binding output with
 			| Stream stream ->
 				(string_of_int (List.length stream)) ^ "\n" ^ string_trim (Streams.string_of_stream stream)
+			| Set set ->
+					Sets.print_set set;
+					""
 			| literal ->
 				Streams.string_of_literal literal
-			| Set set ->
-				(string_of_int (SS.cardinal set)) ^ "\n" ^ string_trim (Streams.string_of_stream (SS.elements set))
-			|  _ -> string_of_int (1)
+			|  _ ->
+			 string_of_int (1)
 
 		(* Stream continuation operations *)
 
@@ -69,8 +71,8 @@ class interpreter =
 			| identifier :: rest ->
 				begin
 					match this#read_binding identifier with
-					| Stream s ->
-						this#update_binding identifier (Streams.skip 1 s);
+					| Set s ->
+						this#update_binding identifier (Sets.skipSet 1 s);
 						()
 					| _ -> ()
 				end;
@@ -85,28 +87,27 @@ class interpreter =
 
 					this#define_streams using sets_list;
 					this#define_output;
-
 					this#run_statement_list start;
-
 					try
 
  						(* Main loop of the program, execute the loop body & advance the streams *)
 
 						while true do
-
 							this#run_statement_list loop;
-
 							this#next_all;
 
 						done
 					with
-						| End_of_stream -> ()
+						| End_of_stream ->
+								 ()
+						| Not_found ->
+								()
 
 		method run_statement_list = function
 			| statement :: rest ->
 				this#run_statement statement;
 				this#run_statement_list rest
-			| [] -> ()
+			|			[] ->()
 
 		method run_statement = function
 			| Expression (expression) ->
@@ -120,10 +121,15 @@ class interpreter =
 							(Streams.out
 								s
 								(this#evaluate_expression expression))
+					| Set s ->
+									this#update_binding output
+										(Sets.out
+											s
+											(this#evaluate_expression expression))
 					| _ -> raise (Fatal "output buffer is not a stream!")
 				end;
 				()
-
+				(*
 			| Skip (n, stream) ->
 				let name =
 					if String.length stream = 0 then
@@ -135,7 +141,7 @@ class interpreter =
 					| Stream s -> this#update_binding name (Streams.skip n s); ()
 					| _ -> raise (Fatal "cannot skip non-streams")
 				end
-
+				*)
 			| If (condition, true_list, false_list) ->
 				if this#evaluate_condition condition then
 					this#run_statement_list true_list
