@@ -210,7 +210,6 @@ class interpreter =
 					match operation with
 								| Union		-> Set(Math.union x y)
 
-
 		method run_assignment optype identifier expression =
 			let evaluated = this#evaluate_expression expression in
 			match optype with
@@ -291,7 +290,11 @@ class interpreter =
 			)
 
 			method construct_set expression_list =
-			Set (
-				SS.of_list ["ana";"mama";"tata"]
+			Set ( SS.of_list(
+				let rec internal = function
+					| expression :: rest -> (Streams.string_of_literal (this#evaluate_expression expression)) :: (internal rest)
+					| [] -> []
+					in
+					internal expression_list)
 			)
 	end;;
