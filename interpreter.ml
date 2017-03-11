@@ -210,6 +210,7 @@ class interpreter =
 					match operation with
 								| Union		-> Set(Math.union x y)
 								| Intersection -> Set(Math.intersection x y)
+								| Difference -> Set(Math.difference x y)
 
 		method run_assignment optype identifier expression =
 			let evaluated = this#evaluate_expression expression in

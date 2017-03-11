@@ -11,6 +11,11 @@ let intersection x y =
 	| Set x, Set y -> SS.inter x y
 	|_, _ -> raise (Invalid_argument "you may only perform SInter on sets of Set type.")
 
+let difference x y =
+	match x, y with
+	| Set x, Set y -> SS.diff x y
+	|_, _ -> raise (Invalid_argument "you may only perform SDiff on sets of Set type.")
+
 let plus x y =
 	match x, y with
 	| Int x, Int y -> Int (x + y)
