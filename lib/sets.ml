@@ -2,21 +2,29 @@
 open Language
 open Errors
 
-	let out stream value =
+let rec string_of_set = function
+	| values :: rest -> values ^ ", " ^ string_of_set rest
+	| [x;y] -> x ^ ", " ^y
+	| [] -> ""
+
+let rec string_of_literal = function
+		| Int n -> string_of_int n
+		| Bool b -> string_of_bool b
+		| Char c -> String.make 1 c
+		| Set s -> string_of_set (SS.elements s)
+		| String s -> s
+
+	let out set value =
 		Set (
 			match value with
-			| Set s -> SS.union stream s
-			| value -> SS.add (Streams.string_of_literal value) stream
+			| Set s -> SS.union set s
+			| value -> SS.add (string_of_literal value) set
 		)
-
-		let print_space_el s =
-			print_string s;
-			print_string ", "
 
 		let print_set s =
 			print_string "{";
-     SS.iter print_space_el s;
-		 print_string "\b\b}"
+     print_string (string_of_set (SS.elements s));
+		 print_string "}"
 
 		 let rec skipSet number set =
 		 	match number with

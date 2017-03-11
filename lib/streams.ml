@@ -18,15 +18,6 @@ let rec skip number stream =
 			with
 				Failure e -> raise End_of_stream
 
-let rec string_of_literal = function
-	| Int n -> string_of_int n
-	| Bool b -> string_of_bool b
-	| Char c -> String.make 1 c
-	| Set s -> print_endline ("run stm: merge pe set in Streams.stringofLit");
-			("elementele setului printate")
-	| String s -> s
-	| Stream s -> string_of_stream s
-
 and string_of_stream = function
 	(* string_of_stream adds quotes, where as string_of_literal does not *)
 	| Int value :: rest -> string_of_literal (Int value) ^ " " ^ string_of_stream rest

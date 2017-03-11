@@ -27,8 +27,8 @@ let equal x y =
 	| String x, Bool y -> if y then (String.length x) <> 0 else (String.length x) = 0
 	| Bool x, String y -> if x then (String.length y) <> 0 else (String.length y) = 0
 
-	(* Streams *)
-	| Stream x, Stream y -> x = y
+	(* Sets *)
+	| Set x, Set y -> SS.equal x y
 	| _, _ -> false
 
 let less_than x y =
@@ -59,8 +59,8 @@ let less_than x y =
 	| String x, Bool y -> if y then (String.length x) = 0 else false
 	| Bool x, String y -> if x then false else (String.length y) > 0
 
-	(* Streams *)
-	| Stream x, Stream y -> x < y
+	(* Sets *)
+	| Set x, Set y -> (SS.compare x y) < 0
 	| _, _ -> false
 
 let greater_than x y =
@@ -89,6 +89,6 @@ let greater_than x y =
 	| String x, Bool y -> if y then false else (String.length x) > 0
 	| Bool x, String y -> if x then (String.length y) = 0 else false
 
-	(* Streams *)
-	| Stream x, Stream y -> x > y
+	(* Sets *)
+	| Set x, Set y -> (SS.compare x y) > 0
 	| _, _ -> false

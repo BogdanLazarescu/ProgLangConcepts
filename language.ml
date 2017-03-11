@@ -5,8 +5,7 @@ type literal =
 	| Bool 	of bool
 	| Char 	of char
 	| String of string
-	| Set of SS.t
-	| Stream of literal list;;
+	| Set of SS.t;;
 
 
 type assignment =
@@ -21,16 +20,11 @@ type binary_operation =
 	type set_operation =
 		Union;;
 
-
 type expression =
  		Literal 				of literal
  	| Identifier 			of string
- 	| StreamAccess 			of string * int
- 	| Application 			of string * expression list
- 	| ScopedApplication 	of string * string * expression list
  	| BinaryOperation 		of binary_operation * expression * expression
  	| Assignment 			of assignment * string * expression
- 	| StreamConstruction 	of expression list
 	| SetConstruction 	of expression list
 	| SetOperation 	of set_operation * expression * expression;;
 
@@ -46,7 +40,6 @@ type condition = UnaryCondition of test;;
 
 type statement =
 	  Expression 	of expression
-	| Skip 			of int * string
 	| Output 		of expression
 	| If 			of condition * statement list * statement list;;
 

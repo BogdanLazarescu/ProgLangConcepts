@@ -4,7 +4,7 @@ open Errors
 open Math
 open Comparison
 open Input
-open Streams
+open Sets
 
 class interpreter =
 	object (this)
@@ -52,13 +52,11 @@ class interpreter =
 
 		method get_output =
 			match this#read_binding output with
-			| Stream stream ->
-				(string_of_int (List.length stream)) ^ "\n" ^ string_trim (Streams.string_of_stream stream)
 			| Set set ->
 					Sets.print_set set;
 					""
 			| literal ->
-				Streams.string_of_literal literal
+				Sets.string_of_literal literal
 			|  _ ->
 			 string_of_int (1)
 
@@ -116,32 +114,14 @@ class interpreter =
 			| Output (expression) ->
 				begin
 					match this#read_binding output with
-					| Stream s ->
-						this#update_binding output
-							(Streams.out
-								s
-								(this#evaluate_expression expression))
 					| Set s ->
 									this#update_binding output
 										(Sets.out
 											s
 											(this#evaluate_expression expression))
-					| _ -> raise (Fatal "output buffer is not a stream!")
+					| _ -> raise (Fatal "output buffer is not a set!")
 				end;
 				()
-				(*
-			| Skip (n, stream) ->
-				let name =
-					if String.length stream = 0 then
-						this#get_default_stream_identifier
-					else
-						stream
-				in begin
-					match this#read_binding name with
-					| Stream s -> this#update_binding name (Streams.skip n s); ()
-					| _ -> raise (Fatal "cannot skip non-streams")
-				end
-				*)
 			| If (condition, true_list, false_list) ->
 				if this#evaluate_condition condition then
 					this#run_statement_list true_list
@@ -154,31 +134,15 @@ class interpreter =
 					literal
 				| Identifier (identifier) ->
 					this#read_binding identifier
-				| Application (identifier, arguments) ->
-					this#apply_function identifier arguments
-				| ScopedApplication (variable, operation, arguments) ->
-					this#apply_scoped_function operation variable arguments
 				| BinaryOperation (operation, left, right) ->
 					this#run_binary_operation operation left right
 				| SetOperation (operation, left, right) ->
 					this#run_set_operation operation left right
 				| Assignment (optype, identifier, value) ->
 					this#run_assignment optype identifier value
-				| StreamConstruction (expressions) ->
-					this#construct_stream expressions
 				| SetConstruction (expressions) ->
 					this#construct_set expressions
-				| StreamAccess (stream, index) ->
-					try
-						match (this#read_binding stream) with
-						| Stream s ->
-							List.nth s index
-						| String s ->
-							Char (String.get s index)
-						| _ -> raise (Fatal "indexing is only allowed for streams and strings")
-					with
-						| Failure e -> raise End_of_stream
-
+					
 		method evaluate_condition condition =
 			match condition with
 				| UnaryCondition test ->
@@ -223,76 +187,10 @@ class interpreter =
 
 				| _ -> evaluated
 
-
-		method apply_function identifier argument_list =
-			let arguments = List.map this#evaluate_expression argument_list in
-				try
-					match identifier with
-
-						| "min" 	-> Math.min (List.nth arguments 0) (List.nth arguments 1)
-						| "max" 	-> Math.max (List.nth arguments 0) (List.nth arguments 1)
-						| "average" -> Math.average arguments
-						| "round" 	-> Math.round (List.nth arguments 0)
-						| "floor" 	-> Math.floor (List.nth arguments 0)
-						| "ceil" 	-> Math.ceil (List.nth arguments 0)
-						| "typeof" 	->
-							String
-								begin
-									match (List.nth arguments 0) with
-										| Int _ -> "int"
-										| Bool _ -> "bool"
-										| Char _ -> "char"
-										| String _ -> "string"
-										| Stream _ -> "stream"
-								end
-						| "debug" ->
-							List.map (fun l -> print_string ((Streams.string_of_literal l) ^ " ")) arguments;
-							print_endline "";
-							Int 0
-
-						| _ -> raise (Fatal ("Call to undeclared function " ^ identifier))
-				with
-					| Failure e ->
-						match e with
-							| "nth" -> raise (Fatal ("Incorrect number of arguments supplied for function: " ^ identifier))
-							| _ -> raise (Fatal ("Function exception: " ^ e))
-
-		method apply_scoped_function operation variable argument_list =
-			let args = List.map this#evaluate_expression argument_list in
-				try
-					let value = this#read_binding variable in
-						match operation with
-
-							| "contains" 	-> Streams.contains this variable value (List.nth args 0)
-							| "append" 		-> Streams.append this variable value (List.nth args 0)
-							| "remove" 		-> Streams.remove this variable value (List.nth args 0)
-							| "length" 		-> Streams.length this variable value
-							| "get" 		-> Streams.get this variable value (List.nth args 0)
-							| "head" 		-> Streams.head this variable value
-							| "tail" 		-> Streams.tail this variable value
-
-							| _ -> raise (Fatal (variable ^ " has no function " ^ operation))
-				with
-					| Failure e ->
-						match e with
-							| "nth" -> raise (Fatal (
-								"Incorrect number of arguments supplied for scoped function " ^
-								operation ^ " on " ^ variable))
-							| _ -> raise (Fatal ("Function exception: " ^ e))
-
-		method construct_stream expression_list =
-			Stream (
-				let rec internal = function
-					| expression :: rest -> (this#evaluate_expression expression) :: (internal rest)
-					| [] -> []
-				in
-					internal expression_list
-			)
-
 			method construct_set expression_list =
 			Set ( SS.of_list(
 				let rec internal = function
-					| expression :: rest -> (Streams.string_of_literal (this#evaluate_expression expression)) :: (internal rest)
+					| expression :: rest -> (Sets.string_of_literal (this#evaluate_expression expression)) :: (internal rest)
 					| [] -> []
 					in
 					internal expression_list)

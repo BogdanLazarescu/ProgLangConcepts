@@ -49,12 +49,6 @@ rule token = parse
 	| "SInter"					{SETINTER}
 	| "SDiff"					{SETDIFF}
 
-	(* Stream Access *)
-
-	| '[' 					{ LBRACKET }
-	| ']' 					{ RBRACKET }
-	| '~' 					{ CURRENT }
-
 	(* Conditionals *)
 
 	| "==" 					{ EQ }
@@ -70,11 +64,9 @@ rule token = parse
 
 	(* Keywords *)
 
-	| "with"				{ USING }
 	| "sets"				{ USE}
 	| "begin"				{ BEGIN }
 	| "loop" 				{ LOOP }
-	| "skip"        { SKIP }
 	| "in"					{ IN }
 	| "out" 				{ OUT }
 

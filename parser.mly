@@ -16,11 +16,10 @@ open Errors
 %token TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE
 %token LPAREN RPAREN
-%token LBRACKET RBRACKET CURRENT
 %token LCBRACKET RCBRACKET
 %token LESSTHAN GREATERTHAN EQ
 %token IF THEN ELSE ENDIF
-%token USING USE BEGIN LOOP SKIP IN OUT
+%token USE BEGIN LOOP IN OUT
 %token ASSIGN
 %token COMMA
 
@@ -37,14 +36,11 @@ open Errors
 %%
 
 main:
-	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
-	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
-	| USING identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
-	|	USE identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
+		USE identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
 	| USE identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
 	| USE identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
 	| error {
-			parse_err "Malformed program structure, 'with' is required, 'begin' and 'loop' are optional but must have statements.";
+			parse_err "Malformed program structure, 'sets' is required, 'begin' and 'loop' are optional but must have statements.";
 			Program ([], [], [])
 		}
 ;
@@ -78,10 +74,6 @@ statement:
 ;
 
 control_statement:
-	  SKIP				{ Skip (1, "") }
-	| SKIP IN IDENT 	{ Skip (1, $3) }
-	| SKIP INT			{ Skip ($2, "") }
-	| SKIP INT IN IDENT { Skip ($2, $4) }
 	| OUT expression 	{ Output $2 }
 ;
 
@@ -103,31 +95,11 @@ expression:
 	| assignment 									{ $1 }
 	| set_operation 							{ $1 }
 	| binary_operation 								{ $1 }
-	| stream_construction 							{ $1 }
 	| set_construction 							{ $1 }
-	| IDENT LPAREN expression_list RPAREN 			{ Application ($1, $3) }
-	| IDENT LPAREN RPAREN 							{ Application ($1, []) }
-	| IDENT LBRACKET INT RBRACKET 					{ StreamAccess ($1, $3) }
-	| IDENT CURRENT 								{ StreamAccess ($1, 0) }
-	| IDENT shift_list 								{ StreamAccess ($1, $2) }
 	| error {
 			parse_err "This expression is malformed.";
 			Literal (Int 0)
 		}
-;
-
-shift_list:
-	  GREATERTHAN 			{ 1 }
-	| shift_list GREATERTHAN { $1 + 1 }
-	| error {
-			parse_err "Invalid shift operation. Only expecting > here.";
-			0
-		}
-;
-
-stream_construction:
-	  LBRACKET expression_list RBRACKET { StreamConstruction $2 }
-	| LBRACKET RBRACKET 				{ StreamConstruction [] }
 ;
 
 set_construction:
