@@ -1,6 +1,0 @@
-
-sets set1, set2
-
-begin
-	set3 = {};
-	out set3;

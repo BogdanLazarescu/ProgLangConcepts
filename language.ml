@@ -17,8 +17,10 @@ type binary_operation =
  	| Divide
  	| Times;;
 
-	type set_operation =
-		Union;;
+type set_operation =
+		Union
+	| Intersection
+	| Difference;;
 
 type expression =
  		Literal 				of literal
