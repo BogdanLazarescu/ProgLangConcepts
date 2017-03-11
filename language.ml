@@ -18,8 +18,9 @@ type binary_operation =
  	| Divide
  	| Times;;
 
-	type set_operation =
-		Union;;
+type set_operation =
+		Union
+	| Intersection;;
 
 
 type expression =

@@ -6,6 +6,11 @@ let union x y =
 	| Set x, Set y -> SS.union x y
 	| _, _ -> raise (Invalid_argument "you may only perform SUnion on sets of Set type.")
 
+let intersection x y =
+	match x, y with
+	| Set x, Set y -> SS.inter x y
+	|_, _ -> raise (Invalid_argument "you may only perform SInter on sets of Set type.")
+
 let plus x y =
 	match x, y with
 	| Int x, Int y -> Int (x + y)

@@ -3,4 +3,4 @@ sets set1, set2
 
 begin
 	set3 = { 1, 1+2, { "sdada23" } SUnion {"sds","sdadsd"}};
-	out set1 SUnion set2 SUnion {"9", "8"};
+	out set1 SUnion set2 SInter {"9", "8"};

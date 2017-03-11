@@ -147,7 +147,8 @@ binary_operation:
 ;
 
 set_operation:
-	expression SETUNION expression { SetOperation (Union, $1, $3) }
+		expression SETUNION expression { SetOperation (Union, $1, $3) }
+	| expression SETINTER expression { SetOperation (Intersection, $1, $3)}
 	;
 
 condition:
