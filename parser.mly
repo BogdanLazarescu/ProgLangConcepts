@@ -11,7 +11,7 @@ open Errors
 %token <string> IDENT
 %token <string> STRING
 
-%token SETUNION SETDIFF SETINTER
+%token SETUNION SETDIFF SETINTER SETCONCAT
 %token EOF EOL
 %token TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE
@@ -24,7 +24,7 @@ open Errors
 %token COMMA
 
 %right ASSIGN
-%left SETUNION SETDIFF SETINTER
+%left SETUNION SETDIFF SETINTER SETCONCAT
 %left EQ
 %left GREATERTHAN	LESSTHAN
 %left PLUS MINUS
@@ -122,6 +122,7 @@ set_operation:
 		expression SETUNION expression { SetOperation (Union, $1, $3) }
 	| expression SETINTER expression { SetOperation (Intersection, $1, $3)}
 	| expression SETDIFF expression {SetOperation (Difference, $1, $3)}
+	| expression SETCONCAT expression {SetOperation (Concatenation, $1, $3)}
 	;
 
 condition:

@@ -20,7 +20,8 @@ type binary_operation =
 type set_operation =
 		Union
 	| Intersection
-	| Difference;;
+	| Difference
+	| Concatenation;;
 
 type expression =
  		Literal 				of literal

@@ -47,7 +47,8 @@ rule token = parse
 
 	| "SUnion" 					{SETUNION}
 	| "SInter"					{SETINTER}
-	| "SDiff"					{SETDIFF}
+	| "SDiff"						{SETDIFF}
+	| "SConcat"					{SETCONCAT}
 
 	(* Conditionals *)
 

@@ -3,9 +3,10 @@ open Language
 open Errors
 
 let rec string_of_set = function
-	| values :: rest -> values ^ ", " ^ string_of_set rest
-	| [x;y] -> x ^ ", " ^y
 	| [] -> ""
+	| [x] -> x
+	| [x;y] -> x ^ ", " ^y
+	| values :: rest -> values ^ ", " ^ string_of_set rest
 
 let rec string_of_literal = function
 		| Int n -> string_of_int n
