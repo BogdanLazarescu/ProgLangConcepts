@@ -4,4 +4,4 @@ begin
 	set3 = {"DANI", "b", "c"} ;
 	set4 = {"edraguta", "esuper"};
 
-	out set3 SConcat set4 ;
+	out set1 SConcat set2 SUnion set3 ;

@@ -38,13 +38,16 @@ let string_of_quoted_char str =
 		else
 			raise (Failure "character not in correct format - expected 'char'")
 
-let string_of_quoted_string str =
-	if String.get str 0 = '"'
-		&& String.get str ((String.length str) - 1) = '"'
+let string_of_braced_set str =
+	if String.get str 0 = '{'
+		&& String.get str ((String.length str) - 1) = '}'
 		then
 			String.sub str 1 ((String.length str) - 2)
 		else
-			raise (Failure "string not in correct format - expected \"char\"")
+			raise (Failure "string not in correct format - expected {char}")
+
+let string_of_stringlist str =
+		String.sub str 0 (String.length str)
 
 let literal_of_string str =
 	try
@@ -60,17 +63,17 @@ let literal_of_string str =
 		Char (string_of_quoted_char str)
 	with Failure bad_format ->
 	try
-		String (string_of_quoted_string str)
+		String (string_of_braced_set str)
 	with Failure bad_format ->
 		raise (Failure ("Unable to parse " ^ str))
 
 let parse channel =
 	try
 
-		(* Read the number & length declarations first *)
+		(* Read the number & length declarations first
 
 		let num_streams = int_of_string (string_trim (input_line channel)) in
-		let stream_length = int_of_string (string_trim (input_line channel)) in
+		let stream_length = int_of_string (string_trim (input_line channel)) in*)
 		let streams = ref [] in
 			try
 			 	while true do
@@ -78,19 +81,19 @@ let parse channel =
 			 		(* Get line, trim it, split it on space & convert to ints *)
 
 			 		let trimmed = string_trim (input_line channel) in
-			 		let split = Str.split (Str.regexp " ") trimmed in
-			 		let stream = List.map string_of_quoted_string split in
+			 		let split = Str.split (Str.regexp ", ") (string_of_braced_set trimmed) in
+			 		let stream = List.map string_of_stringlist split in
 
-			 			if List.length stream == stream_length then
+			 			if true (*List.length stream == stream_length*) then
 			 				begin
 
 			 					streams := Set(SS.of_list stream) :: !streams;
 
-								(* if stream list is now declared size raise end_of_file *)
+								(* if stream list is now declared size raise end_of_file
 
-								if List.length !streams == num_streams then
+								st.length !streams == num_streams then
 			 						raise End_of_file
-
+									*)
 							end
 			 			else
 			 				raise (
@@ -100,7 +103,7 @@ let parse channel =
 			 						" (" ^
 			 						(string_of_int (List.length !streams)) ^
 			 						") does not match the declared length (" ^
-			 						(string_of_int stream_length) ^
+			 						(*string_of_int stream_length*)"as" ^
 			 						")"))
 			 	done;
 			 	[]
@@ -111,9 +114,9 @@ let parse channel =
 						(string_of_int ((List.length !streams) + 1)) ^
 						" contains an invalid element (non-integer)"))
 
-				| End_of_file ->
+				| End_of_file -> List.rev !streams
 
-					(* Check number of streams read matches declaration *)
+					(* Check number of streams read matches declaration
 
 					let actual_num_streams = List.length !streams in
 						if actual_num_streams == num_streams then
@@ -125,7 +128,7 @@ let parse channel =
 									(string_of_int actual_num_streams) ^
 									") does not match the declared count (" ^
 									(string_of_int num_streams) ^
-									")"))
+									")"))   *)
 	with
 		| End_of_file ->
 			raise (Input_format_error

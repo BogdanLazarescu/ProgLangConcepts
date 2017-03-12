@@ -30,7 +30,7 @@ let rec lst_union = function
 let concatenation x y =
 	match x, y with
 	| Set x, Set y ->lst_union (List.map (concat y) (SS.elements x))
-	|_, _ -> raise (Invalid_argument "you may only perform SConcat on sets of Set type.")
+	|_, _ -> raise (Invalid_argument "you may only perform SConcat on sets of S	et type.")
 
 let plus x y =
 	match x, y with
