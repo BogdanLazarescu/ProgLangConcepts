@@ -22,10 +22,7 @@ let strCC e1 e2 = e1 ^ e2
 let concat s el =
 	SS.of_list (List.map (strCC el) (SS.elements s))
 
-let concat2 s el =
-	concat el s
-
-	let rec lst_union = function
+let rec lst_union = function
 		| [] -> SS.empty
 		| [x] -> x
 		| s :: rest ->SS.union s (lst_union rest)
