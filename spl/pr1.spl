@@ -1,0 +1,6 @@
+sets set1
+
+  begin
+    setA = {"a"};
+
+    out setA SConcat set1;
