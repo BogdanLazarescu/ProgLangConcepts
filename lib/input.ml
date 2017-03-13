@@ -44,8 +44,7 @@ let string_of_braced_set str =
 		then
 			String.sub str 1 ((String.length str) - 2)
 		else
-			raise (Failure "string not in correct format - expected {char}")
-
+			raise (Failure "character not in correct format - expected 'char'")
 let string_of_stringlist str =
 		String.sub str 0 (String.length str)
 
@@ -67,6 +66,20 @@ let literal_of_string str =
 	with Failure bad_format ->
 		raise (Failure ("Unable to parse " ^ str))
 
+		let rec print_list = function
+		[] -> ()
+		| e::l -> print_string e ; print_string " " ; print_list l
+
+	let string_of_set_input strSet =
+			try
+				Int (int_of_string strSet);
+				strSet
+			with Failure bad_format ->
+			try
+			string_of_braced_set strSet
+		with Failure bad_format ->
+			raise (Failure ("Unable to parse " ^ strSet))
+
 let parse channel =
 	try
 
@@ -74,14 +87,17 @@ let parse channel =
 
 		let num_streams = int_of_string (string_trim (input_line channel)) in
 		let stream_length = int_of_string (string_trim (input_line channel)) in*)
+
 		let streams = ref [] in
 			try
+
 			 	while true do
-
 			 		(* Get line, trim it, split it on space & convert to ints *)
-
-			 		let trimmed = string_trim (input_line channel) in
-			 		let split = Str.split (Str.regexp ", ") (string_of_braced_set trimmed) in
+					let trimmed = string_trim (input_line channel) in
+				(*	print_endline ("\nam primit trimmed:"^trimmed^"d");*)
+			 		let split = Str.split (Str.regexp ", ") (string_of_set_input trimmed) in
+				(*	print_endline ("\nam primit split:")
+					print_list split;*)
 			 		let stream = List.map string_of_stringlist split in
 
 			 			if true (*List.length stream == stream_length*) then

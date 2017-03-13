@@ -1,7 +1,9 @@
-sets set1,set2
+sets set1,set2,k
 
 begin
 	set3 = {"DANI", "b", "c"} ;
 	set4 = {"edraguta", "esuper"};
 
-	out set1 SConcat set2 SUnion set3 ;
+	out set1 SConcat set2 SUnion k ;
+	out set3;
+	out set3 SConcat set4;

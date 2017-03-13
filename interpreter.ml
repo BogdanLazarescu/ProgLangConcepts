@@ -12,6 +12,7 @@ class interpreter =
 		val mutable bindings = ([] : (string * literal) list)
 		val mutable inputs = ([] : string list)
 		val output = ("_out" : string)
+		val outputList = [];
 
 		(* Bindings read/write *)
 
@@ -53,12 +54,10 @@ class interpreter =
 		method get_output =
 			match this#read_binding output with
 			| Set set ->
-					Sets.print_set set;
-					""
+					Sets.string_of_set_elements (Sets.set_of_first_nth set 5)
 			| literal ->
 				Sets.string_of_literal literal
-			|  _ ->
-			 string_of_int (1)
+			|  _ -> ""
 
 		(* Stream continuation operations *)
 
