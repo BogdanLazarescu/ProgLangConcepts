@@ -61,13 +61,16 @@ let rec kleenStarSet str number=
 			| n -> (SS.add (kleenStar str n) (kleenStarSet str (n-1)))
 
 let rec set_of_first_nth set n =
-print_endline ("apelat");
 	if(n >= (SS.cardinal set)) then
 		set
 	else
 			set_of_first_nth (SS.remove (SS.max_elt set) set) n
 
-
 	let rec print_list = function
 	[] -> ()
 	| e::l -> print_string e ; print_string " " ; print_list l
+
+	let int_of_literal x  =
+		match x with
+		| Int x -> x
+		|_ -> raise (Invalid_argument "you may only perform SInter on sets of Set type.")

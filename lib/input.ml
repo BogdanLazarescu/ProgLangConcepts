@@ -48,6 +48,9 @@ let string_of_braced_set str =
 let string_of_stringlist str =
 		String.sub str 0 (String.length str)
 
+let list_of_braced_set str =
+		Str.split (Str.regexp ", ") (string_of_braced_set str)
+
 let literal_of_string str =
 	try
 		Int (int_of_string str)
@@ -62,7 +65,7 @@ let literal_of_string str =
 		Char (string_of_quoted_char str)
 	with Failure bad_format ->
 	try
-		String (string_of_braced_set str)
+		Set (SS.of_list (list_of_braced_set str))
 	with Failure bad_format ->
 		raise (Failure ("Unable to parse " ^ str))
 
@@ -94,16 +97,16 @@ let parse channel =
 			 	while true do
 			 		(* Get line, trim it, split it on space & convert to ints *)
 					let trimmed = string_trim (input_line channel) in
-				(*	print_endline ("\nam primit trimmed:"^trimmed^"d");*)
-			 		let split = Str.split (Str.regexp ", ") (string_of_set_input trimmed) in
+				(*	print_endline ("\nam primit trimmed:"^trimmed^"d");
+			 		let split = Str.split (Str.regexp ", ") (string_of_set_input trimmed) in*)
 				(*	print_endline ("\nam primit split:")
-					print_list split;*)
-			 		let stream = List.map string_of_stringlist split in
-
+					print_list split;
+			 		let stream = List.map string_of_stringlist split in*)
+					let stream =literal_of_string trimmed in
 			 			if true (*List.length stream == stream_length*) then
 			 				begin
 
-			 					streams := Set(SS.of_list stream) :: !streams;
+			 					streams := stream :: !streams;
 
 								(* if stream list is now declared size raise end_of_file
 

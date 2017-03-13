@@ -35,16 +35,16 @@ class interpreter =
 			else
 				raise (Fatal "Omission of stream identifier in skip is forbidden when there is more than one stream defined")
 
-		method define_streams identifier_list stream_list =
+		method define_sets identifier_list stream_list =
 			try
 				match identifier_list with
 					| identifier :: rest ->
 						bindings <- (identifier, (List.nth stream_list (List.length bindings))) :: bindings;
 						inputs <- identifier :: inputs;
-						this#define_streams rest stream_list
+						this#define_sets rest stream_list
 					| [] -> ()
 			with
-				| Failure e -> raise (Fatal "'with' decleration does not match the number of input streams")
+				| Failure e -> raise (Fatal "'sets' declaration from written program does not match the number of input streams")
 
 		(* Output *)
 
@@ -54,7 +54,7 @@ class interpreter =
 		method get_output =
 			match this#read_binding output with
 			| Set set ->
-					Sets.string_of_set_elements (Sets.set_of_first_nth set 5)
+					Sets.string_of_set_elements (Sets.set_of_first_nth set (Sets.int_of_literal (this#read_binding "k")))
 			| literal ->
 				Sets.string_of_literal literal
 			|  _ -> ""
@@ -82,7 +82,7 @@ class interpreter =
 			match program with
 				| Program (using, start, loop) ->
 
-					this#define_streams using sets_list;
+					this#define_sets using sets_list;
 					this#define_output;
 					this#run_statement_list start;
 					try
