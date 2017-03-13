@@ -172,8 +172,7 @@ class interpreter =
 				let y = this#evaluate_expression right in
 					match operation with
 								| Union		-> Set(Math.union x y)
-								| Intersection ->(Sets.print_set (Sets.kleenStarSet "ma" 3 ));
-													Set(Math.intersection x y)
+								| Intersection ->	Set(Math.intersection x y)
 								| Difference -> Set(Math.difference x y)
 								| Concatenation ->Set(Math.concatenation x y)
 

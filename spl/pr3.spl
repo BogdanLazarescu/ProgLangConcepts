@@ -1,0 +1,5 @@
+sets set1, set2, set3
+
+begin
+  out set1 SInter set2;
+  out set1 SInter set3;
