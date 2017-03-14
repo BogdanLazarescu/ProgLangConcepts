@@ -42,14 +42,21 @@ let string_of_braced_set str =
 	if String.get str 0 = '{'
 		&& String.get str ((String.length str) - 1) = '}'
 		then
-			String.sub str 1 ((String.length str) - 2)
+			string_trim (String.sub str 1 ((String.length str) - 2))
 		else
 			raise (Failure "character not in correct format - expected 'char'")
 let string_of_stringlist str =
 		String.sub str 0 (String.length str)
 
 let list_of_braced_set str =
-		Str.split (Str.regexp ", ") (string_of_braced_set str)
+		Str.split (Str.regexp "[\t \t]*,[ \t]*") (string_of_braced_set str)
+
+let repalce_with_emptyword s =
+		if(s = ":") then ""
+		else s
+
+let replace_with_emptyword_in_list l =
+		List.map repalce_with_emptyword l
 
 let literal_of_string str =
 	try
@@ -65,7 +72,8 @@ let literal_of_string str =
 		Char (string_of_quoted_char str)
 	with Failure bad_format ->
 	try
-		Set (SS.of_list (list_of_braced_set str))
+		Set (SS.of_list
+			(replace_with_emptyword_in_list (list_of_braced_set str)))
 	with Failure bad_format ->
 		raise (Failure ("Unable to parse " ^ str))
 
@@ -98,8 +106,8 @@ let parse channel =
 			 		(* Get line, trim it, split it on space & convert to ints *)
 					let trimmed = string_trim (input_line channel) in
 				(*	print_endline ("\nam primit trimmed:"^trimmed^"d");
-			 		let split = Str.split (Str.regexp ", ") (string_of_set_input trimmed) in*)
-				(*	print_endline ("\nam primit split:")
+			 		let split = Str.split (Str.regexp "") (string_of_set_input trimmed) in
+					print_endline ("\nam primit split:")
 					print_list split;
 			 		let stream = List.map string_of_stringlist split in*)
 					let stream =literal_of_string trimmed in

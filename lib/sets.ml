@@ -73,4 +73,4 @@ let rec set_of_first_nth set n =
 	let int_of_literal x  =
 		match x with
 		| Int x -> x
-		|_ -> raise (Invalid_argument "you may only perform SInter on sets of Set type.")
+		|_ -> raise (Invalid_argument "your k parameter should be of type int")
