@@ -1,4 +1,4 @@
-sets set1, set2, set3
+sets set1, set2, set3, k
 
 begin
   out set1 SInter set2;

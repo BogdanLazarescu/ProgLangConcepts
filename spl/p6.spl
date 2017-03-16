@@ -5,4 +5,4 @@ begin
 	set4 = { ""};
 
 	out set2;
-	out set2 SConcat set3;
+	out set1 SConcat set3;

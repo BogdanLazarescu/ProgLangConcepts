@@ -1,5 +1,4 @@
-3
-5
-"ma" "me" "mi" "mo" "mu"
-"pa" "pe" "pi" "po" "pu"
-"ta" "te" "ti" "to" "tu"
+{ma, me, mi, mo, mu}
+{pa ,pe, pi, po, ,pu}
+{ta, te, ti, to, tu}
+4
