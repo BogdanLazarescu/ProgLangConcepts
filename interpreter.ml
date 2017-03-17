@@ -26,7 +26,7 @@ class interpreter =
 			value
 
 		method update_output set =
-			outputList <- set :: outputList;
+			outputList <- outputList@[set];
 
 		(* Stream Bindings *)
 

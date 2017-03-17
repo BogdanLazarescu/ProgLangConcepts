@@ -3,3 +3,4 @@ sets set1, set2, set3, k
 begin
   out set1 SUnion set2;
   out set1 SUnion set3;
+  out set1 SUnion {"d"};

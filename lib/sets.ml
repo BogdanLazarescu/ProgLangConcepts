@@ -2,21 +2,25 @@
 open Language
 open Errors
 
+let replace_emptyword s =
+	if(s = "") then ":"
+	else s
+
 let rec string_of_set set=
  	let rec internal = function
 	| [] -> ""
-	| [x] -> x
-	| [x;y] -> x ^ ", " ^y
-	| values :: rest -> values ^ ", " ^ internal rest
+	| [x] -> replace_emptyword x
+	| [x;y] -> replace_emptyword x ^ ", " ^y
+	| values :: rest -> replace_emptyword values ^ ", " ^ internal rest
 in internal (SS.elements set)
 
-	let rec string_of_set_elements set=
-		let rec internal = function
-		| [] -> ""
-		| [x] -> x
-		| [x;y] -> x ^ " " ^y
-		| values :: rest -> values ^ " " ^ internal rest
-		in internal (SS.elements set)
+let rec string_of_set_elements set=
+	let rec internal = function
+	| [] -> ""
+	| [x] -> x
+	| [x;y] -> x ^ " " ^y
+	| values :: rest -> values ^ " " ^ internal rest
+	in internal (SS.elements set)
 
 let rec string_of_literal = function
 		| Int n -> string_of_int n
@@ -32,10 +36,10 @@ let out value =
 			match value with
 			| Set s -> s
 			| value -> SS.add (string_of_literal value) SS.empty
-		
+
 
 let print_set s =
-			print_string "{";
+		 print_string "{";
      print_string (string_of_set s);
 		 print_string "}"
 
@@ -47,17 +51,6 @@ let rec skipSet number set =
 		 			skipSet (n - 1) (SS.remove (SS.min_elt set) set)
 		 		with
 		 			Failure e -> raise End_of_stream
-
-let rec kleenStar str number =
-	match number with
-			| 0 -> ""
-			| n ->
-				str ^ (kleenStar str (n-1))
-
-let rec kleenStarSet str number=
-	match number with
-			| 0 -> SS.empty
-			| n -> (SS.add (kleenStar str n) (kleenStarSet str (n-1)))
 
 (*return a set containing just first n elements of it*)
 let rec set_of_first_nth n set =

@@ -1,0 +1,6 @@
+sets set1, set2, set3, k
+  begin
+    setA={"a"};
+    setB={"b"};
+    out set1 SUnion set2 SConcat setA;
+    out set1 SUnion set3 SConcat setB;
