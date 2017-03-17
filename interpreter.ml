@@ -10,8 +10,7 @@ class interpreter =
 
 		val mutable bindings = ([] : (string * literal) list)
 		val mutable inputs = ([] : string list)
-		val output = ("_out" : string)
-		val outputList = [];
+		val mutable outputList = ([] : SS.t list);
 
 		(* Bindings read/write *)
 
@@ -25,6 +24,9 @@ class interpreter =
 		method update_binding identifier value =
 			bindings <- (identifier, value) :: List.remove_assoc identifier bindings;
 			value
+
+		method update_output set =
+			outputList <- set :: outputList;
 
 		(* Stream Bindings *)
 
@@ -48,15 +50,12 @@ class interpreter =
 		(* Output *)
 
 		method define_output =
-			this#update_binding output (Set(SS.empty))
+			outputList <- []
+
 
 		method get_output =
-			match this#read_binding output with
-			| Set set ->
-					Sets.string_of_set_elements (Sets.set_of_first_nth set (Sets.int_of_literal (this#read_binding "k")))
-			| literal ->
-				Sets.string_of_literal literal
-			|  _ -> ""
+					Sets.string_of_set_list outputList  (Sets.int_of_literal (this#read_binding "k"))
+
 
 		(* Stream continuation operations *)
 
@@ -111,13 +110,8 @@ class interpreter =
 
 			| Output (expression) ->
 				begin
-					match this#read_binding output with
-					| Set s ->
-									this#update_binding output
-										(Sets.out
-											s
-											(this#evaluate_expression expression))
-					| _ -> raise (Fatal "output buffer is not a set!")
+					this#update_output
+										(Sets.out (this#evaluate_expression expression))
 				end;
 				()
 			| If (condition, true_list, false_list) ->

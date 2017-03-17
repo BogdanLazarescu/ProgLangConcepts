@@ -28,12 +28,11 @@ let rec string_of_literal = function
 let rec unbraced_string_of_set s =
 		 string_of_set s
 
-let out set value =
-		Set (
+let out value =
 			match value with
-			| Set s -> SS.add (string_of_literal (Set(s))) set
-			| value -> SS.add (string_of_literal value) set
-		)
+			| Set s -> s
+			| value -> SS.add (string_of_literal value) SS.empty
+		
 
 let print_set s =
 			print_string "{";
@@ -60,11 +59,20 @@ let rec kleenStarSet str number=
 			| 0 -> SS.empty
 			| n -> (SS.add (kleenStar str n) (kleenStarSet str (n-1)))
 
-let rec set_of_first_nth set n =
+(*return a set containing just first n elements of it*)
+let rec set_of_first_nth n set =
 	if(n >= (SS.cardinal set)) then
-		set
+		Set(set)
 	else
-			set_of_first_nth (SS.remove (SS.max_elt set) set) n
+			set_of_first_nth n (SS.remove (SS.max_elt set) set)
+
+  let rec string_of_set_list = function
+    [] ->""
+    | e::l -> (string_of_literal e)^ "\n" ^ (string_of_set_list l)
+
+let string_of_set_list set n =
+	let lst= (List.map (set_of_first_nth n) set) in
+    string_of_set_list lst
 
 	let rec print_list = function
 	[] -> ()
