@@ -1,8 +1,14 @@
 sets set1,set2,k
 
 begin
-	set3 = {"DANI", "b", "c"} ;
-	set4 = { ""};
-
-	out set2;
-	out set1 SConcat set3;
+	aStar = {} ;
+	carToAdd = {"a"};
+	nextChar = {""};
+	i = 0;
+loop
+	i = i+1;
+	nextChar = nextChar SConcat carToAdd;
+	aStar = aStar SUnion nextChar;
+	if i ==k then
+		out aStar;
+	endif

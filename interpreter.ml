@@ -52,10 +52,8 @@ class interpreter =
 		method define_output =
 			outputList <- []
 
-
 		method get_output =
-					Sets.string_of_set_list outputList  (Sets.int_of_literal (this#read_binding "k"))
-
+			Sets.string_of_set_list outputList  (Sets.int_of_literal (this#read_binding "k"))
 
 		(* Stream continuation operations *)
 
@@ -86,12 +84,15 @@ class interpreter =
 					try
 
  						(* Main loop of the program, execute the loop body & advance the streams *)
-
-						while true do
+						let k = (Sets.int_of_literal (this#read_binding "k")) in
+						(*while k>0 do
 							this#run_statement_list loop;
-							this#next_all;
+							(*this#next_all;*)
 
-						done
+						*)
+						for i = 1 to k do
+							this#run_statement_list loop;
+						 done
 					with
 						| End_of_stream ->
 								 ()
