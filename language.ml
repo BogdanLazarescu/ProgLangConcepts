@@ -46,5 +46,9 @@ type statement =
 	| Output 		of expression
 	| If 			of condition * statement list * statement list;;
 
+	type int_statement =
+	Literal of literal
+	| Identifier of string;;
+
 type program =
-	  Program of string list * statement list * statement list;;
+	  Program of string list * statement list * statement list * int_statement;;

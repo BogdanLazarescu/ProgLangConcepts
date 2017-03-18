@@ -68,7 +68,6 @@ rule token = parse
 	| "sets"				{ USE}
 	| "begin"				{ BEGIN }
 	| "loop" 				{ LOOP }
-	| "in"					{ IN }
 	| "out" 				{ OUT }
 
 	| '=' 					{ ASSIGN }

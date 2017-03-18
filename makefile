@@ -5,7 +5,7 @@ LIBDIR=lib
 
 # Output Binary
 
-BINARY=river
+BINARY=mysplinterpreter
 
 # Output Directories
 
@@ -15,7 +15,7 @@ GENDIR=gen
 
 # Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES= language.ml errors.ml parser.ml lexer.ml comparison.ml math.ml input.ml sets.ml interpreter.ml river.ml
+SOURCES= language.ml errors.ml parser.ml lexer.ml comparison.ml math.ml input.ml sets.ml interpreter.ml mylang.ml
 
 # OCaml precompiled libraries to include during linking
 
@@ -31,7 +31,7 @@ YACC=ocamlyacc
 
 OBJS= $(addprefix $(OBJDIR)/, $(SOURCES:.ml=.cmo))
 
-# Execute a full river build
+# Execute a full build
 
 all: $(BINDIR)/$(BINARY)
 

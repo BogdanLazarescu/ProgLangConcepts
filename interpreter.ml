@@ -76,7 +76,7 @@ class interpreter =
 
 		method run program sets_list =
 			match program with
-				| Program (using, start, loop) ->
+				| Program (using, start, loop, loopInt) ->
 
 					this#define_sets using sets_list;
 					this#define_output;
@@ -84,12 +84,8 @@ class interpreter =
 					try
 
  						(* Main loop of the program, execute the loop body & advance the streams *)
-						let k = (Sets.int_of_literal (this#read_binding "k")) in
-						(*while k>0 do
-							this#run_statement_list loop;
-							(*this#next_all;*)
-
-						*)
+						let k = this#evaluate_intStatement loopInt in
+						print_int k;
 						for i = 1 to k do
 							this#run_statement_list loop;
 						 done
@@ -135,6 +131,13 @@ class interpreter =
 					this#run_assignment optype identifier value
 				| SetConstruction (expressions) ->
 					this#construct_set expressions
+
+			method evaluate_intStatement expression =
+				match expression with
+					| Literal (literal) ->
+						Sets.int_of_literal literal
+					| Identifier (identifier) ->
+						Sets.int_of_literal (this#read_binding identifier)
 
 		method evaluate_condition condition =
 			match condition with

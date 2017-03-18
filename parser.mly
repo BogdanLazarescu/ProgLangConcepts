@@ -19,7 +19,7 @@ open Errors
 %token LCBRACKET RCBRACKET
 %token LESSTHAN GREATERTHAN EQ
 %token IF THEN ELSE ENDIF
-%token USE BEGIN LOOP IN OUT
+%token USE BEGIN LOOP OUT
 %token ASSIGN
 %token COMMA
 
@@ -36,12 +36,12 @@ open Errors
 %%
 
 main:
-		USE identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
-	| USE identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
-	| USE identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
+		USE identifier_list BEGIN statement_list LOOP int_statement statement_list EOF 	{ Program ($2, $4, $7, $6) }
+	| USE identifier_list LOOP int_statement statement_list EOF 				{ Program ($2, [], $5, $4) }
+	| USE identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, [], Literal(Int 0)) }
 	| error {
 			parse_err "Malformed program structure, 'sets' is required, 'begin' and 'loop' are optional but must have statements.";
-			Program ([], [], [])
+			Program ([], [], [],  Literal(Int 0))
 		}
 ;
 
@@ -85,6 +85,15 @@ flow_statement:
 expression_list:
 	  expression 						{ [ $1 ] }
 	| expression COMMA expression_list 	{ $1 :: $3 }
+;
+
+int_statement:
+	INT 										{ Literal(Int $1) }
+| IDENT 									{ Identifier $1 }
+| error {
+	parse_err "This expression is malformed.";
+	Literal(Int 0)
+}
 ;
 
 expression:

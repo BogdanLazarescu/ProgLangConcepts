@@ -74,4 +74,4 @@ let string_of_set_list set n =
 	let int_of_literal x  =
 		match x with
 		| Int x -> x
-		|_ -> raise (Invalid_argument "your k parameter should be of type int")
+		|_ -> raise (Invalid_argument "your parameter should be of type int")
