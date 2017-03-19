@@ -37,20 +37,10 @@ let out value =
 			| Set s -> s
 			| value -> SS.add (string_of_literal value) SS.empty
 
-
 let print_set s =
 		 print_string "{";
      print_string (string_of_set s);
 		 print_string "}"
-
-let rec skipSet number set =
-	match number with
-		 | 0 -> Set set
-		 | n ->
-		 		try
-		 			skipSet (n - 1) (SS.remove (SS.min_elt set) set)
-		 		with
-		 			Failure e -> raise End_of_stream
 
 (*return a set containing just first n elements of it*)
 let rec set_of_first_nth n set =

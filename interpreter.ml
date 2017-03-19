@@ -12,86 +12,60 @@ class interpreter =
 		val mutable inputs = ([] : string list)
 		val mutable outputList = ([] : SS.t list);
 
-		(* Bindings read/write *)
+		method get_output =
+			Sets.string_of_set_list outputList  (Sets.int_of_literal (this#read_bind "k"))
 
-		method read_binding identifier =
+			method define_output =
+				outputList <- []
+
+		method read_bind ident =
 			try
-				List.assoc identifier bindings
+				List.assoc ident bindings
 			with
 				Not_found ->
-					raise (Undeclared_identifier identifier)
+					raise (Undeclared_identifier ident)
 
-		method update_binding identifier value =
-			bindings <- (identifier, value) :: List.remove_assoc identifier bindings;
+		method update_binding ident value =
+			bindings <- (ident, value) :: List.remove_assoc ident bindings;
 			value
 
 		method update_output set =
 			outputList <- outputList@[set];
 
-		(* Stream Bindings *)
-
-		method get_default_stream_identifier =
-			if List.length inputs == 1 then
-				List.hd inputs
-			else
-				raise (Fatal "Omission of stream identifier in skip is forbidden when there is more than one stream defined")
-
-		method define_sets identifier_list stream_list =
+		method define_sets ident_list literals_list =
 			try
-				match identifier_list with
-					| identifier :: rest ->
-						bindings <- (identifier, (List.nth stream_list (List.length bindings))) :: bindings;
-						inputs <- identifier :: inputs;
-						this#define_sets rest stream_list
+				match ident_list with
+					| ident :: rest ->
+						bindings <- (ident, (List.nth literals_list (List.length bindings))) :: bindings;
+						inputs <- ident :: inputs;
+						this#define_sets rest literals_list
 					| [] -> ()
 			with
-				| Failure e -> raise (Fatal "'sets' declaration from written program does not match the number of input streams")
+				| Failure e -> raise (Fatal "'sets' declaration from program does not match the number of input literals")
 
-		(* Output *)
+		(* ///////////////////////////  Interpreter  /////////////////////*)
 
-		method define_output =
-			outputList <- []
-
-		method get_output =
-			Sets.string_of_set_list outputList  (Sets.int_of_literal (this#read_binding "k"))
-
-		(* Stream continuation operations *)
-
-		method next_all =
-			this#next inputs
-
-		method next = function
-			| identifier :: rest ->
-				begin
-					match this#read_binding identifier with
-					| Set s ->
-						this#update_binding identifier (Sets.skipSet 1 s);
-						()
-					| _ -> ()
-				end;
-				this#next rest
-			| [] -> ()
-
-		(* Interpreter *)
-
-		method run program sets_list =
-			match program with
+		method run prog sets_list =
+			match prog with
 				| Program (using, start, loop, loopInt) ->
 
+					(*Match the input literals with the one declared in the user  program*)
 					this#define_sets using sets_list;
-					this#define_output;
-					this#run_statement_list start;
-					try
 
- 						(* Main loop of the program, execute the loop body & advance the streams *)
+					(*Initialize the output list*)
+					this#define_output;
+
+					(*Execute the BEGIN part of the code*)
+					this#run_statement_list start;
+
+					(*Execute the LOOP part of the code*)
+					try
+						(*get the loop statement parameter*)
 						let k = this#evaluate_intStatement loopInt in
-						print_int k;
 						for i = 1 to k do
 							this#run_statement_list loop;
 						 done
 					with
-						| End_of_stream ->
-								 ()
 						| Not_found ->
 								()
 
@@ -103,12 +77,12 @@ class interpreter =
 
 		method run_statement = function
 			| Expression (expression) ->
-				this#evaluate_expression expression; ()
+				this#eval_expr expression; ()
 
 			| Output (expression) ->
 				begin
 					this#update_output
-										(Sets.out (this#evaluate_expression expression))
+										(Sets.out (this#eval_expr expression))
 				end;
 				()
 			| If (condition, true_list, false_list) ->
@@ -117,27 +91,29 @@ class interpreter =
 				else
 					this#run_statement_list false_list
 
-		method evaluate_expression expression =
+	(*Evaluate a given Expression*)
+	method eval_expr expression =
+		match expression with
+			| Literal (literal) ->
+				literal
+			| Identifier (identifier) ->
+				this#read_bind identifier
+			| BinaryOperation (operation, left, right) ->
+				this#run_binary_operation operation left right
+			| SetOperation (operation, left, right) ->
+				this#run_set_operation operation left right
+			| Assignment (optype, identifier, value) ->
+				this#run_assignment optype identifier value
+			| SetConstruction (expressions) ->
+				this#construct_set expressions
+
+		(*Evaluate an int statement for the loop parameter*)
+		method evaluate_intStatement expression =
 			match expression with
 				| Literal (literal) ->
-					literal
+					Sets.int_of_literal literal
 				| Identifier (identifier) ->
-					this#read_binding identifier
-				| BinaryOperation (operation, left, right) ->
-					this#run_binary_operation operation left right
-				| SetOperation (operation, left, right) ->
-					this#run_set_operation operation left right
-				| Assignment (optype, identifier, value) ->
-					this#run_assignment optype identifier value
-				| SetConstruction (expressions) ->
-					this#construct_set expressions
-
-			method evaluate_intStatement expression =
-				match expression with
-					| Literal (literal) ->
-						Sets.int_of_literal literal
-					| Identifier (identifier) ->
-						Sets.int_of_literal (this#read_binding identifier)
+					Sets.int_of_literal (this#read_bind identifier)
 
 		method evaluate_condition condition =
 			match condition with
@@ -148,50 +124,42 @@ class interpreter =
 					end
 
 		method evaluate_test test left right =
-			let x = this#evaluate_expression left in
-			let y = this#evaluate_expression right in
+			let l = this#eval_expr left in
+			let r = this#eval_expr right in
 				match test with
-					| Equality 				-> Comparison.equal x y
-					| LessThan 				-> Comparison.less_than x y
-					| GreaterThan 			-> Comparison.greater_than x y
+					| Equality 		-> Comparison.equal l r
+					| GreaterThan -> Comparison.greater_than l r
+					| LessThan 		-> Comparison.less_than l r
 
 		method run_binary_operation operation left right =
-			let x = this#evaluate_expression left in
-			let y = this#evaluate_expression right in
+			let l = this#eval_expr left in
+			let r = this#eval_expr right in
 				match operation with
-					| Plus 		-> Math.plus x y
-					| Minus 	-> Math.minus x y
-					| Times 	-> Math.times x y
-					| Divide 	-> Math.divide x y
+					| Plus 		-> Math.plus l r
+					| Minus 	-> Math.minus l r
+					| Divide 	-> Math.divide l r
+					| Times 	-> Math.times l r
 
 			method run_set_operation operation left right =
-				let x = this#evaluate_expression left in
-				let y = this#evaluate_expression right in
+				let l = this#eval_expr left in
+				let r = this#eval_expr right in
 					match operation with
-								| Union		-> Set(Math.union x y)
-								| Intersection ->	Set(Math.intersection x y)
-								| Difference -> Set(Math.difference x y)
-								| Concatenation ->Set(Math.concatenation x y)
+								| Union		-> Set(Math.union l r)
+								| Intersection ->	Set(Math.intersection l r)
+								| Difference -> Set(Math.difference l r)
+								| Concatenation ->Set(Math.concatenation l r)
 
 		method run_assignment optype identifier expression =
-			let evaluated = this#evaluate_expression expression in
-			match optype with
-				| StandardAssign ->
+			let evaluated = this#eval_expr expression in
 					this#update_binding identifier evaluated;
 					evaluated
 
-				(* StandardAssign & operation assigns need to be seperated,
-				   we want to check if the variable is assigned for operation assigns,
-				   but we need to allow new variables for standard assigns *)
-
-				| _ -> evaluated
-
-			method construct_set expression_list =
+			method construct_set expr_list =
 			Set ( SS.of_list(
 				let rec internal = function
-					| expression :: rest -> (Sets.string_of_literal (this#evaluate_expression expression)) :: (internal rest)
+					| exp :: rest -> (Sets.string_of_literal (this#eval_expr exp)) :: (internal rest)
 					| [] -> []
 					in
-					internal expression_list)
+					internal expr_list)
 			)
 	end;;

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BINARY=bin/river
+BINARY=bin/mysplinterpreter
 TESTS=5
 
 case "$1" in 

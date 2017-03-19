@@ -6,7 +6,7 @@ begin
 	nextChar = {""};
 	i = 0;
 	p = 0;
-	k=6;
+	k=5;
 loop k
 	i = i+1;
 	nextChar = nextChar SConcat carToAdd;

@@ -17,7 +17,7 @@ open Errors
 %token PLUS MINUS TIMES DIVIDE
 %token LPAREN RPAREN
 %token LCBRACKET RCBRACKET
-%token LESSTHAN GREATERTHAN EQ
+%token LESSTHAN GREATERTHAN EQUAL
 %token IF THEN ELSE ENDIF
 %token USE BEGIN LOOP OUT
 %token ASSIGN
@@ -25,7 +25,7 @@ open Errors
 
 %right ASSIGN
 %left SETUNION SETDIFF SETINTER SETCONCAT
-%left EQ
+%left EQUAL
 %left GREATERTHAN	LESSTHAN
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -97,7 +97,6 @@ int_statement:
 ;
 
 expression:
-
 	  literal 										{ Literal $1 }
 	| IDENT 										{ Identifier $1 }
 	| LPAREN expression RPAREN						{ $2 }
@@ -139,7 +138,7 @@ condition:
 ;
 
 test:
-		expression EQ expression 	{ Test (Equality, $1, $3) }
+		expression EQUAL expression 	{ Test (Equality, $1, $3) }
 	| expression LESSTHAN expression 	{ Test (LessThan, $1, $3) }
 	| expression GREATERTHAN expression 	{ Test (GreaterThan, $1, $3) }
 	| error {

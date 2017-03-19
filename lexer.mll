@@ -13,14 +13,10 @@ let alphanum = ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
 rule token = parse
 
-	(* Lines & Whitespace *)
-
 	  white_space 			{ token lexbuf }
 	| '\n' 					{ new_line lexbuf; token lexbuf }
 	| eof 					{ EOF }
 	| ';' 					{ EOL }
-
-	(* Literals *)
 
 	| int 					{ INT(int_of_string (lexeme lexbuf)) }
 	| char 					{ CHAR(String.get (lexeme lexbuf) 1) }
@@ -29,41 +25,29 @@ rule token = parse
 	| "false" 				{ FALSE }
 	| '"' [^ '"']* '"'		{ let s = lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
 
-	(* Math Operators *)
-
 	| '+' 					{ PLUS }
 	| '-' 					{ MINUS }
 	| '*' 					{ TIMES }
 	| '/' 					{ DIVIDE }
-
-	(* Expression Grouping *)
 
 	| '(' 					{ LPAREN }
 	| ')' 					{ RPAREN }
 	| '{'						{ LCBRACKET}
 	| '}'						{	RCBRACKET}
 
-	(* Set Operators*)
-
 	| "SUnion" 					{SETUNION}
 	| "SInter"					{SETINTER}
 	| "SDiff"						{SETDIFF}
 	| "SConcat"					{SETCONCAT}
 
-	(* Conditionals *)
-
-	| "==" 					{ EQ }
+	| "==" 					{ EQUAL }
 	| '<' 					{ LESSTHAN }
 	| '>' 					{ GREATERTHAN }
-
-	(* Control Structures *)
 
 	| "if" 					{ IF }
 	| "then" 				{ THEN }
 	| "else" 				{ ELSE }
 	| "endif" 				{ ENDIF }
-
-	(* Keywords *)
 
 	| "sets"				{ USE}
 	| "begin"				{ BEGIN }
@@ -72,7 +56,6 @@ rule token = parse
 
 	| '=' 					{ ASSIGN }
 
-	(* Identifiers *)
 
 	| ['a'-'z' 'A'-'Z' '_'] alphanum* 	{ IDENT(lexeme lexbuf) }
 
