@@ -65,8 +65,7 @@ class interpreter =
 							this#run_statement_list loop;
 						 done
 					with
-						| Not_found ->
-								()
+						| Not_found -> ()
 
 		method run_statement_list = function
 			| statement :: rest ->
@@ -76,13 +75,10 @@ class interpreter =
 
 		method run_statement = function
 			| Expression (expression) ->
-				this#eval_expr expression; ()
-
+				this#eval_expr expression;
+				()
 			| Output (expression) ->
-				begin
-					this#update_output
-										(Sets.out (this#eval_expr expression))
-				end;
+					this#update_output (Sets.out (this#eval_expr expression));
 				()
 			| If (condition, true_list, false_list) ->
 				if this#evaluate_condition condition then
@@ -93,10 +89,8 @@ class interpreter =
 	(*Evaluate a given Expression*)
 	method eval_expr expression =
 		match expression with
-			| Literal (literal) ->
-				literal
-			| Identifier (identifier) ->
-				this#read_bind identifier
+			| Literal (literal) -> literal
+			| Identifier (identifier) ->	this#read_bind identifier
 			| BinaryOperation (operation, left, right) ->
 				this#run_binary_operation operation left right
 			| SetOperation (operation, left, right) ->
@@ -139,14 +133,14 @@ class interpreter =
 					| Divide 	-> Math.divide l r
 					| Times 	-> Math.times l r
 
-			method run_set_operation operation left right =
-				let l = this#eval_expr left in
-				let r = this#eval_expr right in
-					match operation with
-								| Union		-> Set(Math.union l r)
-								| Intersection ->	Set(Math.intersection l r)
-								| Difference -> Set(Math.difference l r)
-								| Concatenation ->Set(Math.concatenation l r)
+		method run_set_operation operation left right =
+			let l = this#eval_expr left in
+			let r = this#eval_expr right in
+				match operation with
+					| Union		-> Set(Math.union l r)
+					| Intersection ->	Set(Math.intersection l r)
+					| Difference -> Set(Math.difference l r)
+					| Concatenation ->Set(Math.concatenation l r)
 
 		method run_assignment optype identifier expression =
 			let evaluated = this#eval_expr expression in
@@ -154,7 +148,7 @@ class interpreter =
 					evaluated
 
 			method construct_set expr_list =
-			Set ( SS.of_list(
+			Set ( Sets.set_of_list(
 				let rec internal = function
 					| exp :: rest -> (Sets.string_of_literal (this#eval_expr exp)) :: (internal rest)
 					| [] -> []

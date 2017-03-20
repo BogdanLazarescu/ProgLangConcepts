@@ -36,11 +36,6 @@ let out value =
 			| Set s -> s
 			| value -> SS.add (string_of_literal value) SS.empty
 
-let print_set s =
-		 print_string "{";
-     print_string (string_of_set s);
-		 print_string "}"
-
 (*return a set containing just first n elements of it*)
 let rec set_of_first_nth n set =
 	if(n >= (SS.cardinal set)) then
@@ -56,11 +51,11 @@ let string_of_set_list set n =
 	let lst= (List.map (set_of_first_nth n) set) in
     string_of_set_list lst
 
-	let rec print_list = function
-	[] -> ()
-	| e::l -> print_string e ; print_string " " ; print_list l
-
 	let int_of_literal x  =
 		match x with
 		| Int x -> x
 		|_ -> raise (Invalid_argument "your parameter should be of type int")
+
+let set_of_list list =
+	let set = SS.empty in
+    List.fold_right SS.add list set

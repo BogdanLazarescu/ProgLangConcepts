@@ -6,32 +6,31 @@ open Err
 
 let _ =
 	try
-		let sourcefile = Sys.argv.(1) in
+		let srcfile = Sys.argv.(1) in
 			try
-				let lexbuf = Lexing.from_channel (open_in sourcefile) in
-				let program = Parser.main Lexer.token lexbuf in
+				(*Read the input file:*)
+				let input = Lexing.from_channel (open_in srcfile) in
+				(*Read the user program:*)
+				let program = Parser.main Lexer.token input in
+				(*Call the interpreter to interpret the program and output the result*)
 				let interpreter = new Interpreter.interpreter in
-
 					interpreter#run program (Input.parse stdin);
-
+					(*print the output resulted after the program execution*)
 					print_endline interpreter#get_output
 			with
 				| Invalid_argument e ->
-					print_endline ("Invalid argument: " ^ e)
+					prerr_endline ("Invalid arg: " ^ e)
 				| Sys_error e ->
-					print_endline ("Could not read source file: " ^ e)
+					prerr_endline ("Source file unavailable " ^ e)
 				| Parsing.Parse_error ->
-					print_endline "Syntax error: No additional information available."
+					prerr_endline "Syntax error"
 				| Input.Input_format_error e ->
-					print_endline ("Input format error: " ^ e)
-				| Err.Lexing_error e ->
-					print_endline e
-				| Err.Parse_error e ->
-					print_endline e
-				| Err.Fatal e ->
-					print_endline ("Fatal error: " ^ e)
+					prerr_endline ("Input format error: " ^ e)
+				| Err.Lexing_error e ->	prerr_endline e
+				| Err.Parse_error e ->	prerr_endline e
+				| Err.Fatal e -> prerr_endline ("Fatal error: " ^ e)
 				| Err.Undeclared_identifier i ->
-					print_endline ("Use of undeclared identifiers is disallowed, you used: " ^ i)
+					prerr_endline ("Undeclared identifier used " ^ i)
 	with
 		Invalid_argument e ->
-			print_endline "No input file specified.\nUsage: river <source file>"
+			prerr_endline "No input specified.\n"

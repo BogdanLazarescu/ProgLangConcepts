@@ -141,7 +141,7 @@ test:
 	| expression LESSTHAN expression 	{ Test (LessThan, $1, $3) }
 	| expression GREATERTHAN expression 	{ Test (GreaterThan, $1, $3) }
 	| error {
-			parse_err "This test is malformed.";
+			parse_err "Malformed test";
 			Test (Equality, Literal (Int 0), Literal (Int 0))
 		}
 ;

@@ -6,7 +6,6 @@ type literal =
 	| String of string
 	| Set of SS.t;;
 
-
 type assignment =
 	  StandardAssign;;
 

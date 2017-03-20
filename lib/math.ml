@@ -1,5 +1,6 @@
 
 open Language
+open Sets
 
 let union x y =
 	match x, y with
@@ -19,7 +20,7 @@ let difference x y =
 let strCC e1 e2 = e1 ^ e2
 
 let concat s el =
-	SS.of_list (List.map (strCC el) (SS.elements s))
+	Sets.set_of_list (List.map (strCC el) (SS.elements s))
 
 let rec lst_union = function
 	| [] -> SS.empty
