@@ -1,0 +1,4 @@
+sets set1, k
+  begin
+    setABC = {"a", "b", "c"} SConcat {"a", "b", "c"};
+    out set1 SConcat setABC;

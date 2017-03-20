@@ -1,0 +1,13 @@
+sets set1, k
+  begin
+    aStar = {} ;
+    setA = {"a"};
+    nextChar = {""};
+    i = 0;
+  loop k
+    i = i+1;
+    aStar = aStar SUnion nextChar;
+    nextChar = nextChar SConcat setA;
+    if i == k then
+      out set1 SConcat aStar;
+    endif
