@@ -4,17 +4,17 @@ open Language
 let union x y =
 	match x, y with
 	| Set x, Set y -> SS.union x y
-	| _, _ -> raise (Invalid_argument "you may only perform SUnion on sets of Set type.")
+	| _, _ -> raise (Invalid_argument "The arguments of SUnion must be of Set type.")
 
 let intersection x y =
 	match x, y with
 	| Set x, Set y -> SS.inter x y
-	|_, _ -> raise (Invalid_argument "you may only perform SInter on sets of Set type.")
+	|_, _ -> raise (Invalid_argument "The arguments of SInter must be of Set type.")
 
 let difference x y =
 	match x, y with
 	| Set x, Set y -> SS.diff x y
-	|_, _ -> raise (Invalid_argument "you may only perform SDiff on sets of Set type.")
+	|_, _ -> raise (Invalid_argument "The arguments of SDiff must be of Set type.")
 
 let strCC e1 e2 = e1 ^ e2
 
@@ -29,32 +29,27 @@ let rec lst_union = function
 let concatenation x y =
 	match x, y with
 	| Set x, Set y ->lst_union (List.map (concat y) (SS.elements x))
-	|_, _ -> raise (Invalid_argument "you may only perform SConcat on sets of S	et type.")
+	|_, _ -> raise (Invalid_argument "The arguments of SConcat must be of Set type.")
 
 let plus x y =
 	match x, y with
 	| Int x, Int y -> Int (x + y)
-	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "The arguments of '+' must have numeric types.")
 
 let minus x y =
 	match x, y with
 	| Int x, Int y -> Int (x - y)
-	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "The arguments of '-' must have numeric types.")
 
 let times x y =
 	match x, y with
 	| Int x, Int y -> Int (x * y)
-	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "The arguments of '*' must have numeric types.")
 
 let divide x y =
 	match x, y with
 	| Int x, Int y -> Int (x / y)
-	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
-
-let unary_minus x =
-	match x with
-	| Int x -> Int (0 - x)
-	| _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "The arguments of '/' must have numeric types.")
 
 (*Math comparisons between different types*)
 	let equal x y =
@@ -116,6 +111,6 @@ let unary_minus x =
 		| String x, Bool y -> if y then (String.length x) = 0 else false
 		| Bool x, String y -> if x then false else (String.length y) > 0
 
-		(* Comapre Set *)
+		(* Compare Set *)
 		| Set x, Set y -> (SS.compare x y) < 0
 		| _, _ -> false
