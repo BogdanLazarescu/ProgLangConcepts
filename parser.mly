@@ -1,13 +1,12 @@
 %{
 
 open Language
-open Errors
+open Err
 
 %}
 
 %token <int> INT
 %token <bool> BOOL
-%token <char> CHAR
 %token <string> IDENT
 %token <string> STRING
 
@@ -149,7 +148,6 @@ test:
 
 literal:
 	  INT 		{ Int $1 }
-	| CHAR 		{ Char $1 }
 	| BOOL 		{ Bool $1 }
 	| STRING 	{ String $1 }
 ;

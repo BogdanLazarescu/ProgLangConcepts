@@ -15,7 +15,7 @@ GENDIR=gen
 
 # Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES= language.ml errors.ml parser.ml lexer.ml comparison.ml math.ml input.ml sets.ml interpreter.ml mylang.ml
+SOURCES= language.ml err.ml parser.ml lexer.ml math.ml input.ml sets.ml interpreter.ml mylang.ml
 
 # OCaml precompiled libraries to include during linking
 
@@ -69,7 +69,7 @@ $(OBJDIR)/%.cmo: %.ml $(OBJDIR)/%.cmi $(OBJDIR)
 
 # Generate & compile the parser
 
-$(OBJDIR)/parser.cmo $(OBJDIR)/parser.cmi: parser.mly $(GENDIR) $(OBJDIR)/language.cmo $(OBJDIR)/errors.cmo
+$(OBJDIR)/parser.cmo $(OBJDIR)/parser.cmi: parser.mly $(GENDIR) $(OBJDIR)/language.cmo $(OBJDIR)/err.cmo
 	@echo "-> Generating parser..."
 	$(YACC) -b$(GENDIR)/parser -v $<
 	@echo "-> Compiling parser..."

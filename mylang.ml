@@ -1,8 +1,8 @@
-	
+
 open Language
 open Interpreter
 open Input
-open Errors
+open Err
 
 let _ =
 	try
@@ -24,13 +24,13 @@ let _ =
 					print_endline "Syntax error: No additional information available."
 				| Input.Input_format_error e ->
 					print_endline ("Input format error: " ^ e)
-				| Errors.Lexing_error e ->
+				| Err.Lexing_error e ->
 					print_endline e
-				| Errors.Parse_error e ->
+				| Err.Parse_error e ->
 					print_endline e
-				| Errors.Fatal e ->
+				| Err.Fatal e ->
 					print_endline ("Fatal error: " ^ e)
-				| Errors.Undeclared_identifier i ->
+				| Err.Undeclared_identifier i ->
 					print_endline ("Use of undeclared identifiers is disallowed, you used: " ^ i)
 	with
 		Invalid_argument e ->

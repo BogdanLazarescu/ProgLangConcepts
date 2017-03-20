@@ -1,13 +1,12 @@
 {
 	open Parser
 	open Lexing
-	open Errors
+	open Err
 }
 
 let white_space = [' ' '\t']
 let digit = ['0'-'9']
 let int = digit +
-let char = ''' [^ '\n'] '''
 let bool = "true" | "false"
 let alphanum = ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
@@ -19,7 +18,6 @@ rule token = parse
 	| ';' 					{ EOL }
 
 	| int 					{ INT(int_of_string (lexeme lexbuf)) }
-	| char 					{ CHAR(String.get (lexeme lexbuf) 1) }
 	| bool 					{ BOOL(bool_of_string (lexeme lexbuf)) }
 	| "true" 				{ TRUE }
 	| "false" 				{ FALSE }

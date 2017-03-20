@@ -3,7 +3,6 @@ module SS = Set.Make(String);;
 type literal =
 	  Int 	of int
 	| Bool 	of bool
-	| Char 	of char
 	| String of string
 	| Set of SS.t;;
 

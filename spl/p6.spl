@@ -6,11 +6,14 @@ begin
 	nextChar = {""};
 	i = 0;
 	p = 0;
-	k=5;
+	k=7;
 loop k
 	i = i+1;
 	nextChar = nextChar SConcat carToAdd;
 	aStar = aStar SUnion nextChar;
 	if i ==k then
 		out aStar;
+		out set1;
+		out set1 Sunion k;
+		out set1 SUnion aStar;
 	endif

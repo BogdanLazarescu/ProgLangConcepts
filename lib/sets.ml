@@ -1,6 +1,6 @@
 
 open Language
-open Errors
+open Err
 
 let replace_emptyword s =
 	if(s = "") then ":"
@@ -25,7 +25,6 @@ let rec string_of_set_elements set=
 let rec string_of_literal = function
 		| Int n -> string_of_int n
 		| Bool b -> string_of_bool b
-		| Char c -> String.make 1 c
 		| Set s -> ("{" ^ string_of_set s ^ "}" )
 		| String s -> s
 

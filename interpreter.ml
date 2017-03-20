@@ -1,7 +1,6 @@
 open Language
-open Errors
+open Err
 open Math
-open Comparison
 open Input
 open Sets
 
@@ -127,9 +126,9 @@ class interpreter =
 			let l = this#eval_expr left in
 			let r = this#eval_expr right in
 				match test with
-					| Equality 		-> Comparison.equal l r
-					| GreaterThan -> Comparison.greater_than l r
-					| LessThan 		-> Comparison.less_than l r
+					| Equality 		-> Math.equal l r
+					| GreaterThan -> Math.greater_than l r
+					| LessThan 		-> Math.less_than l r
 
 		method run_binary_operation operation left right =
 			let l = this#eval_expr left in

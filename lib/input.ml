@@ -4,20 +4,6 @@ open Language
 
 exception Input_format_error of string;;
 
-let string_of_char str =
-	if String.length str = 1
-	then
-		String.get str 0
-	else
-		raise (Failure "character not in correct format - expected single character")
-
-let string_of_quoted_char str =
-	if String.get str 0 = '\''
-		&& String.get str ((String.length str) - 1) = '\''
-		then
-			String.get str 1
-		else
-			raise (Failure "character not in correct format - expected 'char'")
 
 let string_of_braced_set str =
 	if String.get str 0 = '{'
@@ -44,12 +30,6 @@ let literal_of_string str =
 	try
 		Bool (bool_of_string str)
 	with Invalid_argument invalid_argument ->
-	try
-		Char (string_of_char str)
-	with Failure bad_format ->
-	try
-		Char (string_of_quoted_char str)
-	with Failure bad_format ->
 	try
 		Set (SS.of_list
 			(replace_with_emptyword_in_list (list_of_braced_set str)))
