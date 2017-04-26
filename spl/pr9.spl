@@ -1,0 +1,13 @@
+sets set1, set2, k
+  begin
+    bStar = {};
+    setB = {"b"};
+    nextChar = {""};
+    i = 0;
+  loop k
+    i = i+1;
+    bStar = bStar SUnion nextChar;
+    nextChar = nextChar SConcat setB;
+    if i == k then
+      out ({"a"} SConcat set1) SUnion (set2 SConcat bStar);
+    endif

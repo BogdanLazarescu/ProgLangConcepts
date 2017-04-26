@@ -1,0 +1,4 @@
+sets set1, set2, set3, k
+  begin
+    out (set1 SInter set2) SUnion set2;
+    out set1 SInter (set2 SUnion set3);
